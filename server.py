@@ -2,7 +2,11 @@
 import socketserver
 import os
 
-# Copyright 2013 Abram Hindle, Eddie Antonio Santos
+# CMPUT404-W22 Assignment 1
+# Author: Moe Numasawa
+# Submission date: Jan 28, 2022
+#
+# Copyright 2022 Abram Hindle, Eddie Antonio Santos, Moe Numasawa
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,48 +31,60 @@ import os
 
 # try: curl -v -X GET http://127.0.0.1:8080/
 
-# https://emalsha.wordpress.com/2016/11/24/how-create-http-server-using-python-socket-part-ii/
-# https://stackoverflow.com/questions/4246762/python-code-to-consolidate-css-into-html/23190429
-
 
 class MyWebServer(socketserver.BaseRequestHandler):
     
     def handle(self):
         self.data = self.request.recv(1024).strip()
+
+        # empty data
+        if not self.data:
+            return
+
         print ("Got a request of: %s\n" % self.data)
+
         parse_data = self.data.decode("utf-8").split("\r\n")
         method, path, http = parse_data[0].split(" ")
-        path = "www" + path
+
+        wwwdir = "www" + path
         header = ""
 
-        if method != "GET" and method != "POST":
+        # Methods it cannot handle
+        if method != "GET":
             header = "HTTP/1.1 405 Method Not Allowed\r\n\r\n"
             self.request.sendall(header.encode())
 
-        if os.path.isdir(path):
-            if path[-1] != '/':
+        # if the given path is a directory
+        if os.path.isdir(wwwdir):
+            # path doesn't end with /
+            if wwwdir[-1] != '/':
                 header = "HTTP/1.1 301 Moved Permanently\r\n"
-                path += '/'
+                header += f"Location: http://127.0.0.1:8080{path}/\r\n\r\n"
+                wwwdir += '/'
 
-            path += "index.html"
+            wwwdir += "index.html"
 
+        # reads a file requested
         try:
-            
-            file = open(path, 'rb')
-            response = file.read()
+            f = open(wwwdir, 'rb')
+            response = f.read()
+            f.close()
             header += "HTTP/1.1 200 OK\r\n"
-            if path.endswith('html'):
+
+            # mime-type
+            if wwwdir.endswith('html'):
                 mimetype = "text/html"
-            elif path.endswith('css'):
+            elif wwwdir.endswith('css'):
                 mimetype = "text/css"
+            
             header += "Content-Type: " + mimetype + "\r\n\r\n"
             all_response = header.encode() + response
         
+        # no file found
         except Exception as e:
             header = "HTTP/1.1 404 Not Found\r\n\r\n"
             all_response = header.encode()
 
-        print(all_response)
         self.request.sendall(all_response)
 
 
