@@ -1,9 +1,10 @@
 CMPUT404-assignment-webserver
 =============================
 
-**Author: Moe Numasawa**
-
-**Submission date: Jan 28, 2022**
+* Author: Moe Numasawa
+* CCID: numasawa
+* Submission date: Jan 28, 2022
+* Term: Winter 2022
 
 See requirements.org (plain-text) for a description of the project.
 

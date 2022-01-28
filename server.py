@@ -3,7 +3,7 @@ import socketserver
 import os
 
 # CMPUT404-W22 Assignment 1
-# Author: Moe Numasawa
+# Author: Moe Numasawa (numasawa)
 # Submission date: Jan 28, 2022
 #
 # Copyright 2022 Abram Hindle, Eddie Antonio Santos, Moe Numasawa
